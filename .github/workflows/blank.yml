@@ -1,0 +1,109 @@
+#
+# Copyright (c) 2019-2020 P3TERX <https://p3terx.com>
+#
+# This is free software, licensed under the MIT License.
+# See /LICENSE for more information.
+#
+# https://github.com/P3TERX/Actions-OpenWrt
+# Description: Build OpenWrt using GitHub Actions
+#
+
+name: 测试
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: '是否开启SSH'   #默认 false ，true 为开启
+        required: false
+        default: 'false'
+
+env:
+  GITHUB_LINK: https://github.com/${{github.repository}}
+  GIT_REPOSITORY: ${{github.repository}}
+#  REPO_URL: https://github.com/openwrt/openwrt
+#  REPO_BRANCH: v21.02.5
+#  FEEDS_CONF: feeds.conf.default
+#  CONFIG_FILE: .config
+#  DIY_P1_SH: diy-part1.sh
+#  DIY_P2_SH: diy-part2.sh
+  UPLOAD_BIN_DIR: false           #上传 bin 目录。即包含所有 ipk 文件和固件的目录。默认false
+  UPLOAD_FIRMWARE: true           #上传固件目录。默认true
+  UPLOAD_RELEASE: false           #上传固件到 releases 。默认false
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    name: 编译${{matrix.target}}
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [openwrt_21.02.5]
+
+    steps:
+    - name: 准备结束
+      uses: actions/checkout@main
+
+    - name: 检测脚本设置
+      run: |
+        source "${GITHUB_WORKSPACE}/build/${{matrix.target}}/settings.ini"
+        echo ${GITHUB_WORKSPACE}
+        
+        echo "REPO_URL=${REPO_URL}" >> ${GITHUB_ENV}
+        echo "REPO_BRANCH=${REPO_BRANCH}" >> ${GITHUB_ENV}
+        echo "CONFIG_FILE=${CONFIG_FILE}" >> ${GITHUB_ENV}
+        echo "FEEDS_CONF=${FEEDS_CONF}" >> ${GITHUB_ENV}
+        echo "DIY_P1_SH=${DIY_P1_SH}" >> ${GITHUB_ENV}
+        echo "DIY_P2_SH=${DIY_P2_SH}" >> ${GITHUB_ENV}
+        
+    - name: 测试
+      run: |
+        echo $REPO_URL
+        echo $REPO_BRANCH
+    
+    - name: 加载配置文件
+      run: |
+        pwd
+        echo ${GITHUB_WORKSPACE}
+        
+        git clone https://github.com/openwrt/openwrt.git
+        pwd
+        
+        cd openwrt
+        pwd
+    
+    - name: ls
+      run: |
+        cp build/${{matrix.target}}/$CONFIG_FILE openwrt/.config
+        ls -A
+        echo "............."
+        ls -A build/${{matrix.target}}/
+        echo "............."
+        ls -A openwrt
+        
+    - name: 测试file文件夹是否正确被复制
+      run: |
+        pwd
+        mkdir test
+        if [ -n "$(ls -A "build/${{matrix.target}}/DIY" 2>/dev/null)" ]; then
+          cp -Rf $GITHUB_WORKSPACE/build/${{matrix.target}}/DIY/* openwrt
+        fi
+        cd openwrt
+        ls -A
+        echo "........."
+        ls -A package
+        echo "........."
+        ls -A package/base-files
+        echo "........."
+        ls -A package/base-files/files
+        echo "........."
+        ls -A package/base-files/files/etc
+        echo "........."
+        
+        
+        cat package/base-files/files/etc/banner
+        echo "........."
+        cat package/base-files/files/etc/openwrt_release
