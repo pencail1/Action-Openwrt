@@ -99,7 +99,7 @@ jobs:
       
 
     - name: 加载配置文件(config)，同时运行part2脚本
-      run: |      
+      run: |
         cp build/${{matrix.target}}/$CONFIG_FILE openwrt/.config
         chmod +x build/${{matrix.target}}/$DIY_P2_SH    
         cd openwrt
