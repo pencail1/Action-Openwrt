@@ -25,6 +25,6 @@ echo 'src-git small https://github.com/kenzok8/small' >>feeds.conf.default
 #echo 'src-git istore https://github.com/linkease/istore;main' >>feeds.conf.default
 
 
-#git clone https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
-#git clone https://github.com/jerrykuku/luci-app-argon-config.git package/luci-app-argon-config
+git clone --branch luci-21 https://github.com/jjm2473/luci-theme-argon.git package/luci-theme-argon
+git clone --branch dev https://github.com/jjm2473/luci-app-argon-config.git package/luci-app-argon-config
  
