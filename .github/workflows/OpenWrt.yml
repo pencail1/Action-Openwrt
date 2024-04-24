@@ -88,11 +88,13 @@ jobs:
     - name: 更新自定义源(feeds)
       run: cd openwrt && ./scripts/feeds update -a
     
-    - name: 删除自定义源中的argon
+    - name: 删除自定义源中的argon和argone
       run: |
         cd openwrt
         rm -rf feeds/kenzo/luci-app-argon-config
         rm -rf feeds/kenzo/luci-theme-argon
+        rm -rf feeds/kenzo/luci-app-argone-config
+        rm -rf feeds/kenzo/luci-them、-argone
     
     - name: 安装自定义源(feeds)
       run: cd openwrt && ./scripts/feeds install -a
