@@ -30,7 +30,7 @@ env:
 #  DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: false           #上传 bin 目录。即包含所有 ipk 文件和固件的目录。默认false
   UPLOAD_FIRMWARE: true           #上传固件目录。默认true
-  UPLOAD_RELEASE: false           #上传固件到 releases 。默认false
+  UPLOAD_RELEASE: true           #上传固件到 releases 。默认false
   TZ: Asia/Shanghai
 
 jobs:
@@ -107,3 +107,18 @@ jobs:
         cat package/base-files/files/etc/banner
         echo "........."
         cat package/base-files/files/etc/openwrt_release
+
+    - name: 发布测试
+      uses: softprops/action-gh-release@v1
+      if: env.UPLOAD_RELEASE == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        name: 测试
+        tag_name: test
+        body: |            
+              ☆  源码 : ${{ env.REPO_URL }}
+              ☆  分支 : ${{ env.REPO_BRANCH }}
+              ☆  感谢源码作者无私分享！
+        files: ${{ env.FIRMWARE }}/*
+        
