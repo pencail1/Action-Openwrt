@@ -112,7 +112,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: env.UPLOAD_RELEASE == 'true'
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
       with:
         name: 测试
         tag_name: test
