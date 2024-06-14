@@ -108,17 +108,27 @@ jobs:
         echo "........."
         cat package/base-files/files/etc/openwrt_release
 
-    - name: 发布测试
-      uses: softprops/action-gh-release@v1
-      if: env.UPLOAD_RELEASE == 'true'
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+#    - name: 发布测试
+#      uses: softprops/action-gh-release@v1
+#      if: env.UPLOAD_RELEASE == 'true'
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+#      with:
+#        name: 测试
+#        tag_name: test
+#        body: |            
+#              ☆  源码 : ${{ env.REPO_URL }}
+#              ☆  分支 : ${{ env.REPO_BRANCH }}
+#              ☆  感谢源码作者无私分享！
+#        files: ${{ env.FIRMWARE }}/*
+
+    - name: telegram通知(编译成功)
+      uses: appleboy/telegram-action@master
       with:
-        name: 测试
-        tag_name: test
-        body: |            
-              ☆  源码 : ${{ env.REPO_URL }}
-              ☆  分支 : ${{ env.REPO_BRANCH }}
-              ☆  感谢源码作者无私分享！
-        files: ${{ env.FIRMWARE }}/*
+        to: ${{secrets.TELEGRAM_CHAT_ID}}
+        token: ${{secrets.TELEGRAM_TOKEN}}
+        message: |
+           「 ${{ env.REPO_BRANCH }} 」固件编译成功
+           请前往查看 https://github.com/${{ github.repository }}/releases
+           时间：${{ steps.tag.outputs.release_tag }}
         
